@@ -1,8 +1,9 @@
-package ru.makproductions.sberbanktesttask
+package ru.makproductions.sberbanktesttask.ui.main
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import ru.makproductions.sberbanktesttask.R
 
 class MainActivity : AppCompatActivity() {
 
