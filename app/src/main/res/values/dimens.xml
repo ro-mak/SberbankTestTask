@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="bottom_navigation_height">56dp</dimen>
+    <dimen name="first_language_text_view_margin_end">8dp</dimen>
+    <dimen name="change_translation_direction_button_margin_end">8dp</dimen>
+</resources>
