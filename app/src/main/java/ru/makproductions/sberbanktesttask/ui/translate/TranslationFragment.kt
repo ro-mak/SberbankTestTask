@@ -8,7 +8,9 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.Spinner
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -48,11 +50,22 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
     override fun setLangDirection(translationDirection: String) {
         val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
         toolbar?.let {
-            val directions = translationDirection.split("-")
-            val originalDirectionTextView = it.findViewById<TextView>(R.id.first_language_text_view)
-            originalDirectionTextView?.text = directions[0]
-            val translationDirectionTextView = it.findViewById<TextView>(R.id.second_language_text_view)
-            translationDirectionTextView.text = directions[1]
+
+        }
+    }
+
+    override fun setLanguages(languageList: List<String>) {
+        val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
+        toolbar?.let {
+            val firstLanguageSpinner = it.findViewById<Spinner>(R.id.first_language_spinner)
+            val firstLanguageSpinnerAdapter = ArrayAdapter<String>(context!!, R.layout.language_spinner_item)
+            firstLanguageSpinnerAdapter.addAll(languageList)
+            firstLanguageSpinner.adapter = firstLanguageSpinnerAdapter
+            val secondLanguageSpinner = it.findViewById<Spinner>(R.id.second_language_spinner)
+            val secondLanguageSpinnerAdapter = ArrayAdapter<String>(context!!, R.layout.language_spinner_item)
+            secondLanguageSpinnerAdapter.addAll(languageList)
+            secondLanguageSpinner.adapter = secondLanguageSpinnerAdapter
+
         }
     }
 
@@ -64,6 +77,11 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
     override fun onResume() {
         super.onResume()
         presenter.onViewStateRestored()
+        showToolbar()
+    }
+
+    private fun showToolbar() {
+        setToolbarVisibitity(View.VISIBLE)
     }
 
     override fun onPause() {
@@ -71,7 +89,22 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
         super.onPause()
         presenter.onSaveOriginalText(original_text_input_edit_text?.text.toString())
         presenter.onSaveTranslationText(translation_text_input_edit_text?.text.toString())
+        hideToolBar()
     }
+
+    private fun hideToolBar() {
+        setToolbarVisibitity(View.GONE)
+    }
+
+    private fun setToolbarVisibitity(visibility: Int) {
+        val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
+        toolbar?.let {
+            it.findViewById<Spinner>(R.id.first_language_spinner).visibility = visibility
+            it.findViewById<Spinner>(R.id.second_language_spinner).visibility = visibility
+            it.findViewById<ImageView>(R.id.change_translation_direction_button).visibility = visibility
+        }
+    }
+
 
     private fun initInputFields(view: View) {
         val originalTextWatcher = object : TextWatcher {

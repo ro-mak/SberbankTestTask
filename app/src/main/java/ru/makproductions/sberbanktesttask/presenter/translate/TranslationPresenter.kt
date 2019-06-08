@@ -6,6 +6,7 @@ import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import ru.makproductions.sberbanktesttask.common.toMap
 import ru.makproductions.sberbanktesttask.model.repo.translation.ITranslationRepo
 import ru.makproductions.sberbanktesttask.view.translate.TranslationView
 import timber.log.Timber
@@ -15,7 +16,17 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
 
     private val translationRepo: ITranslationRepo by inject()
     private val disposables: MutableList<Disposable> = mutableListOf()
-    fun onCreate() {}
+    fun onCreate() {
+        loadLanguages()
+    }
+
+    private fun loadLanguages() {
+        disposables.add(translationRepo.loadLanguages("ru").observeOn(scheduler).subscribe({
+            val languages = it.languages
+            viewState.setLanguages(languages.toMap().values.toList())
+            translationRepo.saveLanguageMap(languages.toMap())
+        }, { Timber.e(it) }))
+    }
 
     fun afterOriginalTextChanged(originalText: String) {
         Timber.e("text = " + originalText)

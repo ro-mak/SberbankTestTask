@@ -10,4 +10,5 @@ interface TranslationView : MvpView {
     fun clearTranslationText()
     fun setLangDirection(translationDirection: String)
     fun setOriginalText(originalText: String)
+    fun setLanguages(languageList: List<String>)
 }

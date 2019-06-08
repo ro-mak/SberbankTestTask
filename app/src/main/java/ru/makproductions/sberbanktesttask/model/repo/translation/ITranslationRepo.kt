@@ -1,6 +1,7 @@
 package ru.makproductions.sberbanktesttask.model.repo.translation
 
 import io.reactivex.Single
+import ru.makproductions.sberbanktesttask.model.entity.Languages
 import ru.makproductions.sberbanktesttask.model.entity.Translation
 
 interface ITranslationRepo {
@@ -9,4 +10,6 @@ interface ITranslationRepo {
     fun getSavedOriginalText(): String
     fun getSavedTranslationText(): String
     fun saveOriginalText(originalText: String)
+    fun loadLanguages(locale: String): Single<Languages>
+    fun saveLanguageMap(languageMap: Map<String, String>)
 }
