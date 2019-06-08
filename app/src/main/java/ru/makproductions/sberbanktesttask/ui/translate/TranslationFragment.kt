@@ -61,6 +61,8 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
         }
     }
 
+    val onDirectionChangeButtonClickListener = View.OnClickListener { presenter.onDirectionChangeButtonClick() }
+
     override fun setLanguages(languageList: List<String>) {
         val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
         toolbar?.let {
@@ -74,6 +76,8 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
             secondLanguageSpinnerAdapter.addAll(languageList)
             secondLanguageSpinner.adapter = secondLanguageSpinnerAdapter
             secondLanguageSpinner.onItemSelectedListener = onSecondLanguageSelectedListener
+            val directionChangeButton = it.findViewById<ImageView>(R.id.change_translation_direction_button)
+            directionChangeButton.setOnClickListener(onDirectionChangeButtonClickListener)
         }
     }
 

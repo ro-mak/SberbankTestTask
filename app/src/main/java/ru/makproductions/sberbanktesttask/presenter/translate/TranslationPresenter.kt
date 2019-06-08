@@ -39,13 +39,20 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
             viewState.clearTranslationText()
             return
         }
+        loadTranslation(originalText)
+    }
+
+    private fun loadTranslation(originalText: String) {
         disposables.add(translationRepo.loadTranslation(originalText).observeOn(scheduler).subscribe({ translationItem ->
             Timber.e("Loading translation for " + originalText)
             val textStringBuilder = StringBuilder()
             for (line in translationItem.text) {
                 textStringBuilder.append(line)
             }
-            viewState.setTranslationText(textStringBuilder.toString())
+            val translationText = textStringBuilder.toString()
+            translationRepo.saveOriginalText(originalText)
+            translationRepo.saveTranslationText(translationText)
+            viewState.setTranslationText(translationText)
         }, { Timber.e(it) }))
     }
 
@@ -72,15 +79,49 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
         viewState.setLanguages(languages)
         val firstLanguage = translationRepo.getSavedFirstLanguage()
         val secondLanguage = translationRepo.getSavedSecondLanguage()
-        viewState.setFirstLanguage(languages.indexOf(firstLanguage))
-        viewState.setSecondLanguage(languages.indexOf(secondLanguage))
+        setViewLanguagesValues(languages, firstLanguage, secondLanguage)
     }
 
     fun onSaveFirstLanguage(languageName: String) {
         translationRepo.saveFirstLanguage(languageName)
+        translationRepo.getSavedOriginalText().let { if (it.isNotEmpty()) loadTranslation(it) }
+
     }
 
     fun onSaveSecondLanguage(languageName: String) {
         translationRepo.saveSecondLanguage(languageName)
+        translationRepo.getSavedOriginalText().let { if (it.isNotEmpty()) loadTranslation(it) }
+    }
+
+    fun onDirectionChangeButtonClick() {
+        val languages = translationRepo.getSavedLanguages() as? MutableList<String> ?: mutableListOf()
+        val firstLanguage = translationRepo.getSavedFirstLanguage()
+        val secondLanguage = translationRepo.getSavedSecondLanguage()
+        setViewLanguagesValues(languages, secondLanguage, firstLanguage)
+        setRepoLanguagesValues(secondLanguage, firstLanguage)
+        setTextValues()
+    }
+
+    private fun setRepoLanguagesValues(secondLanguage: String, firstLanguage: String) {
+        translationRepo.saveFirstLanguage(secondLanguage)
+        translationRepo.saveSecondLanguage(firstLanguage)
+    }
+
+    private fun setTextValues() {
+        val translationText = translationRepo.getSavedTranslationText()
+        val originalText = translationRepo.getSavedOriginalText()
+        viewState.setOriginalText(translationText)
+        viewState.setTranslationText(originalText)
+        translationRepo.saveOriginalText(translationText)
+        translationRepo.saveTranslationText(originalText)
+    }
+
+    private fun setViewLanguagesValues(
+        languages: MutableList<String>,
+        firstLanguage: String,
+        secondLanguage: String
+    ) {
+        viewState.setFirstLanguage(languages.indexOf(firstLanguage))
+        viewState.setSecondLanguage(languages.indexOf(secondLanguage))
     }
 }

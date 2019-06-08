@@ -4,6 +4,9 @@
           android:layout_width="match_parent" android:layout_height="match_parent"
           tools:text="Text"
           android:gravity="center_horizontal"
+          android:padding="8dp"
+          android:textStyle="bold"
+          android:textColor="@android:color/black"
 >
 
 </TextView>
