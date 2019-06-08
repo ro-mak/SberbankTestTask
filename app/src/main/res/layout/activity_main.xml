@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/fragment_container"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
     <android.support.v7.widget.Toolbar
             android:id="@+id/main_toolbar"
             app:title="@string/app_name"
@@ -23,7 +25,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginEnd="@dimen/first_language_text_view_margin_end"
-                    tools:text = "Text1"
+                    tools:text="Text1"
             />
             <ImageView
                     android:id="@+id/change_translation_direction_button"
@@ -39,10 +41,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    tools:text = "Text2"
+                    tools:text="Text2"
             />
         </LinearLayout>
     </android.support.v7.widget.Toolbar>
+
+    <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
     <android.support.design.widget.BottomNavigationView
             android:id="@+id/bottom_navigation_view"
             android:layout_width="match_parent"
@@ -52,7 +60,6 @@
             app:itemTextColor="@color/bottom_navigation_colour_selector"
             app:menu="@menu/bottom_navigation_menu"
             android:layout_gravity="start|bottom"
-
     />
 </FrameLayout>
 
