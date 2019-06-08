@@ -5,6 +5,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import ru.makproductions.sberbanktesttask.di.cacheModule
 import ru.makproductions.sberbanktesttask.di.ciceroneModule
+import ru.makproductions.sberbanktesttask.di.networkModule
 import ru.makproductions.sberbanktesttask.di.repoModule
 import timber.log.Timber
 
@@ -19,7 +20,7 @@ class App : Application() {
         Timber.plant(Timber.DebugTree())
         startKoin {
             androidContext(this@App)
-            modules(listOf(repoModule, cacheModule, ciceroneModule))
+            modules(listOf(repoModule, cacheModule, ciceroneModule, networkModule))
         }
     }
 }

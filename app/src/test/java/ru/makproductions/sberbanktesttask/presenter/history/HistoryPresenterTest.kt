@@ -12,7 +12,7 @@ import org.koin.test.inject
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import ru.makproductions.sberbanktesttask.di.testRepoModule
-import ru.makproductions.sberbanktesttask.model.repo.IHistoryRepo
+import ru.makproductions.sberbanktesttask.model.repo.history.IHistoryRepo
 
 class HistoryPresenterTest : KoinTest {
 

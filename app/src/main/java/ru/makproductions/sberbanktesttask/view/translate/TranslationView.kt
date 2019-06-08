@@ -7,4 +7,6 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface TranslationView : MvpView {
     fun setTranslationText(translationText: String)
+    fun clearTranslationText()
+    fun setLangDirection(translationDirection: String)
 }

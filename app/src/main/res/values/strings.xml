@@ -4,5 +4,8 @@
     <string name="history_tab_title">History</string>
     <string name="options_tab_title">Options</string>
     <string name="translation_direction_button_description">translation direction</string>
+    <string name="translation_api_key">
+        trnsl.1.1.20190607T172934Z.87f2d9d0810b24b8.33cbb92331080c9965e8da27f8a3aa7ba4d4f76c
+    </string>
 
 </resources>

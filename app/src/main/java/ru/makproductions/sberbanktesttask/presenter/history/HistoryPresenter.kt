@@ -6,7 +6,7 @@ import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import ru.makproductions.sberbanktesttask.model.repo.IHistoryRepo
+import ru.makproductions.sberbanktesttask.model.repo.history.IHistoryRepo
 import ru.makproductions.sberbanktesttask.view.history.HistoryView
 import timber.log.Timber
 
