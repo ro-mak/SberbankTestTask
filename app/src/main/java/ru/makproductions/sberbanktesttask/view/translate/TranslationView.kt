@@ -8,7 +8,6 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 interface TranslationView : MvpView {
     fun setTranslationText(translationText: String)
     fun clearTranslationText()
-    fun setLangDirection(translationDirection: String)
     fun setOriginalText(originalText: String)
     fun setLanguages(languageList: List<String>)
     fun setFirstLanguage(position: Int)

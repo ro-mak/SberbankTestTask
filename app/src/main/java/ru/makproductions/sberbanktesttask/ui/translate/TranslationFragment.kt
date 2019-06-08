@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Spinner
@@ -47,10 +48,16 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
         return view
     }
 
-    override fun setLangDirection(translationDirection: String) {
-        val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
-        toolbar?.let {
-
+    val onFirstLanguageSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            presenter.onSaveFirstLanguage(parent?.getItemAtPosition(position) as? String ?: "")
+        }
+    }
+    val onSecondLanguageSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            presenter.onSaveSecondLanguage(parent?.getItemAtPosition(position) as? String ?: "")
         }
     }
 
@@ -61,10 +68,12 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
             val firstLanguageSpinnerAdapter = ArrayAdapter<String>(context!!, R.layout.language_spinner_item)
             firstLanguageSpinnerAdapter.addAll(languageList)
             firstLanguageSpinner.adapter = firstLanguageSpinnerAdapter
+            firstLanguageSpinner.onItemSelectedListener = onFirstLanguageSelectedListener
             val secondLanguageSpinner = it.findViewById<Spinner>(R.id.second_language_spinner)
             val secondLanguageSpinnerAdapter = ArrayAdapter<String>(context!!, R.layout.language_spinner_item)
             secondLanguageSpinnerAdapter.addAll(languageList)
             secondLanguageSpinner.adapter = secondLanguageSpinnerAdapter
+            secondLanguageSpinner.onItemSelectedListener = onSecondLanguageSelectedListener
         }
     }
 

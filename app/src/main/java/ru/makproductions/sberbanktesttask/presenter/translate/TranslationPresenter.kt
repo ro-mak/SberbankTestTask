@@ -45,9 +45,7 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
             for (line in translationItem.text) {
                 textStringBuilder.append(line)
             }
-
             viewState.setTranslationText(textStringBuilder.toString())
-            viewState.setLangDirection(translationItem.translationDirection)
         }, { Timber.e(it) }))
     }
 
