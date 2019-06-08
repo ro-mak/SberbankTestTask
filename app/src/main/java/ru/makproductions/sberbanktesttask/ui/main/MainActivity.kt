@@ -9,12 +9,12 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 import ru.makproductions.sberbanktesttask.R
 import ru.makproductions.sberbanktesttask.navigation.FragmentNavigator
-import ru.makproductions.sberbanktesttask.navigation.Screens
 import ru.makproductions.sberbanktesttask.presenter.main.MainPresenter
+import ru.makproductions.sberbanktesttask.ui.history.HistoryFragment
+import ru.makproductions.sberbanktesttask.ui.options.OptionsFragment
 import ru.makproductions.sberbanktesttask.ui.translate.TranslationFragment
 import ru.makproductions.sberbanktesttask.view.main.MainView
 import ru.terrakok.cicerone.NavigatorHolder
-import timber.log.Timber
 
 class MainActivity : MvpAppCompatActivity(), MainView, KoinComponent {
 
@@ -35,25 +35,30 @@ class MainActivity : MvpAppCompatActivity(), MainView, KoinComponent {
 
     private fun initBottomNavigation() {
         bottom_navigation_view.setOnNavigationItemSelectedListener {
+            val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
             when (it.itemId) {
-                R.id.translate_tab -> presenter.onTranslateTabSelected().let { true }
-                R.id.history_tab -> presenter.onHistoryTabSelected().let { true }
-                R.id.options_tab -> presenter.onOptionsTabSelected().let { true }
+                R.id.translate_tab ->
+                    if (fragment is TranslationFragment)
+                        true
+                    else
+                        presenter.onTranslateTabSelected().let { true }
+                R.id.history_tab ->
+                    if (fragment is HistoryFragment)
+                        true
+                    else
+                        presenter.onHistoryTabSelected().let { true }
+                R.id.options_tab ->
+                    if (fragment is OptionsFragment)
+                        true
+                    else
+                        presenter.onOptionsTabSelected().let { true }
                 else -> false
             }
         }
     }
 
     override fun onFragmentExit() {
-        val fragment = supportFragmentManager.getBackStackEntryAt(supportFragmentManager.backStackEntryCount - 2).name
-        Timber.e("${fragment}")
-        if (fragment == Screens.Companion.TranslationScreen::class.java.canonicalName) {
-            bottom_navigation_view.selectedItemId = R.id.translate_tab
-        } else if (fragment == Screens.Companion.HistoryScreen::class.java.canonicalName) {
-            bottom_navigation_view.selectedItemId = R.id.history_tab
-        } else if (fragment == Screens.Companion.OptionsScreen::class.java.canonicalName) {
-            bottom_navigation_view.selectedItemId = R.id.options_tab
-        }
+        bottom_navigation_view.selectedItemId = R.id.translate_tab
     }
 
     override fun onBackPressed() {

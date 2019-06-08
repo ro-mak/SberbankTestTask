@@ -28,7 +28,7 @@ class MainPresenter : MvpPresenter<MainView>(), KoinComponent {
     }
 
     fun onBackPressed() {
-        router.exit()
+        router.navigateTo(Screens.Companion.TranslationScreen())
         viewState.onFragmentExit()
     }
 }
