@@ -12,4 +12,3 @@ fun YandexSupportedLanguage.toMap(): Map<String, String> {
     }
     return mapOfLanguages
 }
-

@@ -17,14 +17,18 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
     private val translationRepo: ITranslationRepo by inject()
     private val disposables: MutableList<Disposable> = mutableListOf()
     fun onCreate() {
-        loadLanguages()
+        if (!translationRepo.areLanguagesSaved()) {
+            loadLanguages()
+        }
     }
 
     private fun loadLanguages() {
         disposables.add(translationRepo.loadLanguages("ru").observeOn(scheduler).subscribe({
+            Timber.e("Loading languages")
             val languages = it.languages
-            viewState.setLanguages(languages.toMap().values.toList())
-            translationRepo.saveLanguageMap(languages.toMap())
+            val languageMap = languages.toMap()
+            viewState.setLanguages(languageMap.values.toList())
+            translationRepo.saveLanguageMap(languageMap)
         }, { Timber.e(it) }))
     }
 
@@ -66,5 +70,19 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
     fun onViewStateRestored() {
         viewState.setOriginalText(translationRepo.getSavedOriginalText())
         viewState.setTranslationText(translationRepo.getSavedTranslationText())
+        val languages = translationRepo.getSavedLanguages() as? MutableList<String> ?: mutableListOf()
+        viewState.setLanguages(languages)
+        val firstLanguage = translationRepo.getSavedFirstLanguage()
+        val secondLanguage = translationRepo.getSavedSecondLanguage()
+        viewState.setFirstLanguage(languages.indexOf(firstLanguage))
+        viewState.setSecondLanguage(languages.indexOf(secondLanguage))
+    }
+
+    fun onSaveFirstLanguage(languageName: String) {
+        translationRepo.saveFirstLanguage(languageName)
+    }
+
+    fun onSaveSecondLanguage(languageName: String) {
+        translationRepo.saveSecondLanguage(languageName)
     }
 }

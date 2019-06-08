@@ -65,7 +65,6 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
             val secondLanguageSpinnerAdapter = ArrayAdapter<String>(context!!, R.layout.language_spinner_item)
             secondLanguageSpinnerAdapter.addAll(languageList)
             secondLanguageSpinner.adapter = secondLanguageSpinnerAdapter
-
         }
     }
 
@@ -75,6 +74,7 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
     }
 
     override fun onResume() {
+        Timber.e("onResume")
         super.onResume()
         presenter.onViewStateRestored()
         showToolbar()
@@ -89,7 +89,34 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
         super.onPause()
         presenter.onSaveOriginalText(original_text_input_edit_text?.text.toString())
         presenter.onSaveTranslationText(translation_text_input_edit_text?.text.toString())
+        val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
+        toolbar?.let {
+            val firstLanguageSpinner = it.findViewById<Spinner>(R.id.first_language_spinner)
+            presenter.onSaveFirstLanguage((firstLanguageSpinner.selectedItem as? String) ?: "")
+            val secondLanguageSpinner = it.findViewById<Spinner>(R.id.second_language_spinner)
+            presenter.onSaveSecondLanguage((secondLanguageSpinner.selectedItem as? String) ?: "")
+        }
+
+
         hideToolBar()
+    }
+
+    override fun setFirstLanguage(position: Int) {
+        val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
+        Timber.e("set first to " + position + " Toolbar = " + toolbar)
+        toolbar?.let {
+            val firstLanguageSpinner = it.findViewById<Spinner>(R.id.first_language_spinner)
+            firstLanguageSpinner.setSelection(position)
+        }
+    }
+
+    override fun setSecondLanguage(position: Int) {
+        val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
+        Timber.e("set second to " + position + " Toolbar = " + toolbar)
+        toolbar?.let {
+            val secondLanguageSpinner = it.findViewById<Spinner>(R.id.second_language_spinner)
+            secondLanguageSpinner.setSelection(position)
+        }
     }
 
     private fun hideToolBar() {

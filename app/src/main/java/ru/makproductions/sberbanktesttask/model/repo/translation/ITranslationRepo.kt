@@ -12,4 +12,10 @@ interface ITranslationRepo {
     fun saveOriginalText(originalText: String)
     fun loadLanguages(locale: String): Single<Languages>
     fun saveLanguageMap(languageMap: Map<String, String>)
+    fun getSavedLanguages(): List<String>
+    fun getSavedFirstLanguage(): String
+    fun getSavedSecondLanguage(): String
+    fun saveFirstLanguage(languageName: String)
+    fun saveSecondLanguage(languageName: String)
+    fun areLanguagesSaved(): Boolean
 }
