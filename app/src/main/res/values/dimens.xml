@@ -7,4 +7,6 @@
     <dimen name="original_text_input_layout_margin">8dp</dimen>
     <dimen name="original_text_input_edit_text_margin">8dp</dimen>
     <dimen name="main_toolbar_height">56dp</dimen>
+    <dimen name="input_field_frame_corner_radius">16dp</dimen>
+    <dimen name="input_field_frame_stroke_width">2dp</dimen>
 </resources>
