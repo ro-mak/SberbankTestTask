@@ -3,4 +3,8 @@
     <dimen name="bottom_navigation_height">56dp</dimen>
     <dimen name="first_language_text_view_margin_end">8dp</dimen>
     <dimen name="change_translation_direction_button_margin_end">8dp</dimen>
+    <dimen name="original_text_input_layout_min_height">100dp</dimen>
+    <dimen name="original_text_input_layout_margin">8dp</dimen>
+    <dimen name="original_text_input_edit_text_margin">8dp</dimen>
+    <dimen name="main_toolbar_height">56dp</dimen>
 </resources>
