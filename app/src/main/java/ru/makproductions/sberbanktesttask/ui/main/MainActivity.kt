@@ -30,7 +30,9 @@ class MainActivity : MvpAppCompatActivity(), MainView, KoinComponent {
         setContentView(R.layout.activity_main)
         setSupportActionBar(main_toolbar)
         initBottomNavigation()
-        presenter.onCreate()
+        if (savedInstanceState == null) {
+            presenter.onCreate()
+        }
     }
 
     private fun initBottomNavigation() {

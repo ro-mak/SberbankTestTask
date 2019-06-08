@@ -15,8 +15,6 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
 
     private val translationRepo: ITranslationRepo by inject()
     private val disposables: MutableList<Disposable> = mutableListOf()
-    private var translationText = ""
-    private var originalText = ""
     fun onCreate() {}
 
     fun afterOriginalTextChanged(originalText: String) {
@@ -26,19 +24,20 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
             viewState.clearTranslationText()
             return
         }
-        this.originalText = originalText
         disposables.add(translationRepo.loadTranslation(originalText).observeOn(scheduler).subscribe({ translationItem ->
+            Timber.e("Loading translation for " + originalText)
             val textStringBuilder = StringBuilder()
             for (line in translationItem.text) {
                 textStringBuilder.append(line)
             }
-            translationText = textStringBuilder.toString()
-            viewState.setTranslationText(translationText)
+
+            viewState.setTranslationText(textStringBuilder.toString())
             viewState.setLangDirection(translationItem.translationDirection)
         }, { Timber.e(it) }))
     }
 
     override fun onDestroy() {
+        Timber.e("onDestroy")
         super.onDestroy()
         for (disposable in disposables) {
             disposable.dispose()
@@ -46,10 +45,15 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
     }
 
     fun onSaveTranslationText(translationText: String) {
-        this.translationText = translationText
+        translationRepo.saveTranslationText(translationText)
     }
 
     fun onSaveOriginalText(originalText: String) {
-        this.originalText = originalText
+        translationRepo.saveOriginalText(originalText)
+    }
+
+    fun onViewStateRestored() {
+        viewState.setOriginalText(translationRepo.getSavedOriginalText())
+        viewState.setTranslationText(translationRepo.getSavedTranslationText())
     }
 }

@@ -38,9 +38,10 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        Timber.e("onCreateView")
         val view = inflater.inflate(R.layout.fragment_translation, container, false)
-        presenter.onCreate()
         initInputFields(view)
+        presenter.onCreate()
         return view
     }
 
@@ -55,10 +56,21 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        presenter.onSaveOriginalText(original_text_input_edit_text.text.toString())
-        presenter.onSaveTranslationText(translation_text_input_edit_text.text.toString())
+    override fun setOriginalText(originalText: String) {
+        Timber.e("Set original to " + originalText)
+        original_text_input_edit_text.setText(originalText)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.onViewStateRestored()
+    }
+
+    override fun onPause() {
+        Timber.e("onPause")
+        super.onPause()
+        presenter.onSaveOriginalText(original_text_input_edit_text?.text.toString())
+        presenter.onSaveTranslationText(translation_text_input_edit_text?.text.toString())
     }
 
     private fun initInputFields(view: View) {
