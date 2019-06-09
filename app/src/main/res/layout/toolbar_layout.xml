@@ -57,13 +57,5 @@
                 tools:listitem="@layout/language_spinner_item"
                 />
 
-        <android.support.v7.widget.SearchView
-                android:id="@+id/history_search_view"
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                />
-
     </LinearLayout>
 </android.support.v7.widget.Toolbar>

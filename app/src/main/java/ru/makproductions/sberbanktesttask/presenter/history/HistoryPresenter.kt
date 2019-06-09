@@ -26,12 +26,17 @@ open class HistoryPresenter(val scheduler: Scheduler) : MvpPresenter<HistoryView
         Timber.e("loadHistory")
         disposables.add(historyRepo.loadHistory().observeOn(scheduler).subscribe({ list ->
             historyListPresenter.setItemList(list)
+            historyRepo.saveHistory(list)
         }, { Timber.e(it) }))
     }
 
     fun deleteHistory() {
         historyRepo.deleteHistory()
         historyListPresenter.deleteHistory()
+    }
+
+    fun onSearchQueryTextChange(query: String) {
+        historyListPresenter.filterHistory(query)
     }
 
     inner class HistoryListPresenter : IHistoryListPresenter {
@@ -42,6 +47,16 @@ open class HistoryPresenter(val scheduler: Scheduler) : MvpPresenter<HistoryView
                 view.setOriginalText(historyUnit.originalText)
                 view.setTranslationText(historyUnit.translationText)
             }
+        }
+
+        override fun filterHistory(query: String) {
+            val filteredList: MutableList<HistoryUnit> = mutableListOf()
+            for (item in historyRepo.getSavedHistory()) {
+                if (item.originalText.startsWith(query) || item.translationText.startsWith(query)) {
+                    filteredList.add(item)
+                }
+            }
+            setItemList(filteredList)
         }
 
         override fun deleteHistory() {

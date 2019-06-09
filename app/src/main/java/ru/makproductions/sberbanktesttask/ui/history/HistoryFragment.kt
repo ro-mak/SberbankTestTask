@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
-import android.support.v7.widget.Toolbar
 import android.view.*
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -25,6 +24,7 @@ class HistoryFragment : MvpAppCompatFragment(), HistoryView {
         val presenter = HistoryPresenter(AndroidSchedulers.mainThread())
         return presenter
     }
+
     companion object {
         fun getInstance(): HistoryFragment {
             val fragment = HistoryFragment()
@@ -32,30 +32,22 @@ class HistoryFragment : MvpAppCompatFragment(), HistoryView {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        showHistoryToolbarViews()
-    }
+    private val onQueryTextListener = object : SearchView.OnQueryTextListener {
+        override fun onQueryTextSubmit(query: String?): Boolean = true
 
-    private fun showHistoryToolbarViews() {
-        val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
-        toolbar?.findViewById<SearchView>(R.id.history_search_view)?.visibility = View.VISIBLE
+        override fun onQueryTextChange(query: String?): Boolean {
+            query?.let { historyPresenter.onSearchQueryTextChange(it) }
+            return true
+        }
     }
-
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.history_menu, menu)
+        val menuItem = menu?.findItem(R.id.history_search_view)
+        val searchView: SearchView = menuItem?.actionView as SearchView
+        searchView.setIconifiedByDefault(false)
+        searchView.setOnQueryTextListener(onQueryTextListener)
     }
 
-    private fun hideHistoryToolbarViews() {
-        val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
-        toolbar?.findViewById<SearchView>(R.id.history_search_view)?.visibility = View.GONE
-    }
-
-
-    override fun onPause() {
-        super.onPause()
-        hideHistoryToolbarViews()
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_history, container, false)

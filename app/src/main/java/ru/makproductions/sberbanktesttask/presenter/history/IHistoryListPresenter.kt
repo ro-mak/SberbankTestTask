@@ -10,4 +10,5 @@ interface IHistoryListPresenter {
 
     fun setItemList(itemList: List<HistoryUnit>)
     fun deleteHistory()
+    fun filterHistory(query: String)
 }

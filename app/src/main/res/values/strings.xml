@@ -10,5 +10,7 @@
     <string name="original_text_hint">Оригинал</string>
     <string name="translation_text_hint">Перевод</string>
     <string name="delete_history_button_title">Delete history</string>
+    <string name="history_search_hint">Search a word</string>
+    <string name="history_search_title">History search</string>
 
 </resources>

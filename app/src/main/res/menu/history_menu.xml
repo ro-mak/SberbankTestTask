@@ -3,6 +3,13 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         >
+
+    <item
+            android:id="@+id/history_search_view"
+            android:title="@string/history_search_title"
+            app:actionViewClass="android.support.v7.widget.SearchView"
+            app:showAsAction="always"
+            />
     <item
             android:title="@string/delete_history_button_title"
             app:showAsAction="always"
