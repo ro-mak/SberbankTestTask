@@ -12,5 +12,10 @@
     <string name="delete_history_button_title">Delete history</string>
     <string name="history_search_hint">Search a word</string>
     <string name="history_search_title">History search</string>
+    <string name="green_theme_option_name">Green Theme</string>
+    <string name="blue__theme_option_name">Blue Theme</string>
+    <string name="red__theme_option_name">Red Theme</string>
+    <string name="first_language_options_description">Choose first language</string>
+    <string name="second_language_options_description">Choose second language</string>
 
 </resources>

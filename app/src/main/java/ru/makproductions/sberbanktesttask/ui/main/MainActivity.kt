@@ -60,13 +60,9 @@ class MainActivity : MvpAppCompatActivity(), MainView, KoinComponent {
         }
     }
 
-    override fun onFragmentExit() {
-        bottom_navigation_view.selectedItemId = R.id.translate_tab
-    }
 
     override fun onBackPressed() {
-        val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
-        if (fragment is TranslationFragment) {
+        if (supportFragmentManager.backStackEntryCount == 1) {
             finish()
         } else {
             presenter.onBackPressed()

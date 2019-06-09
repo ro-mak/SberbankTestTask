@@ -1,6 +1,7 @@
 package ru.makproductions.sberbanktesttask.ui.history
 
 import android.os.Bundle
+import android.support.design.widget.BottomNavigationView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
@@ -30,6 +31,12 @@ class HistoryFragment : MvpAppCompatFragment(), HistoryView {
             val fragment = HistoryFragment()
             return fragment
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val bottomNavigation = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+        bottomNavigation?.menu?.findItem(R.id.history_tab)?.isChecked = true
     }
 
     private val onQueryTextListener = object : SearchView.OnQueryTextListener {

@@ -1,6 +1,7 @@
 package ru.makproductions.sberbanktesttask.ui.options
 
 import android.os.Bundle
+import android.support.design.widget.BottomNavigationView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,12 @@ class OptionsFragment : MvpAppCompatFragment(), OptionsView {
             val fragment = OptionsFragment()
             return fragment
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val bottomNavigation = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+        bottomNavigation?.menu?.findItem(R.id.options_tab)?.isChecked = true
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -30,6 +30,6 @@ class MainPresenter : MvpPresenter<MainView>(), KoinComponent {
     }
 
     fun onBackPressed() {
-        viewState.onFragmentExit()
+        router.exit()
     }
 }

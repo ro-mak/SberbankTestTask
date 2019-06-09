@@ -29,8 +29,10 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
             Timber.e("Loading languages")
             val languages = it.languages
             val languageMap = languages.toMap()
-            viewState.setLanguages(languageMap.values.toList())
+            val languagesList = languageMap.values.toList()
+            viewState.setLanguages(languagesList)
             translationRepo.saveLanguageMap(languageMap)
+            //setViewLanguagesValues(languagesList.toMutableList(),translationRepo.getDefaultFirstLanguage(),translationRepo.getDefaultSecondLanguage())
         }, { Timber.e(it) }))
     }
 
@@ -66,6 +68,7 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
                         firstLanguage,
                         secondLanguage
                     )
+                    , true
                 )
                 viewState.setTranslationText(translationText)
             }, { Timber.e(it) })
@@ -109,6 +112,7 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
                     it.languageTranslation,
                     it.languageOriginal
                 )
+                , false
             )
             setReversedViewTextValues(it)
         }
@@ -128,5 +132,11 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
     ) {
         viewState.setFirstLanguage(languages.indexOf(firstLanguage))
         viewState.setSecondLanguage(languages.indexOf(secondLanguage))
+    }
+
+    fun OnArgumentsReceived(historyUnit: HistoryUnit?) {
+        historyUnit?.let {
+            translationRepo.saveHistoryUnit(it, false)
+        }
     }
 }

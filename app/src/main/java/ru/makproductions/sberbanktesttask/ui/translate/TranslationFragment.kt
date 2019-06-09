@@ -1,6 +1,8 @@
 package ru.makproductions.sberbanktesttask.ui.translate
 
+import android.content.Context
 import android.os.Bundle
+import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.TextInputEditText
 import android.support.v7.widget.Toolbar
 import android.text.Editable
@@ -22,6 +24,9 @@ import io.reactivex.functions.Function
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_translation.*
 import ru.makproductions.sberbanktesttask.R
+import ru.makproductions.sberbanktesttask.common.toArray
+import ru.makproductions.sberbanktesttask.common.toHistoryUnit
+import ru.makproductions.sberbanktesttask.model.entity.HistoryUnit
 import ru.makproductions.sberbanktesttask.presenter.translate.TranslationPresenter
 import ru.makproductions.sberbanktesttask.view.translate.TranslationView
 import timber.log.Timber
@@ -32,6 +37,7 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
     @InjectPresenter
     lateinit var presenter: TranslationPresenter
 
+
     @ProvidePresenter
     fun providePresenter(): TranslationPresenter {
         val presenter = TranslationPresenter(AndroidSchedulers.mainThread())
@@ -39,13 +45,20 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
     }
 
     companion object {
-        fun getInstance(): TranslationFragment {
+        private val HISTORY_UNIT = "HISTORY_UNIT"
+        fun getInstance(historyUnit: HistoryUnit? = null): TranslationFragment {
             val fragment = TranslationFragment()
+            historyUnit?.let {
+                val bundle = Bundle()
+                bundle.putStringArray(HISTORY_UNIT, it.toArray())
+                fragment.arguments = bundle
+            }
             return fragment
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        isFirstLoad = true
         Timber.e("onCreateView")
         val view = inflater.inflate(R.layout.fragment_translation, container, false)
         initInputFields(view)
@@ -73,14 +86,33 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
 
     override fun setOriginalText(originalText: String) {
         Timber.e("Set original to " + originalText)
+        original_text_input_edit_text.removeTextChangedListener(originalTextWatcher)
         original_text_input_edit_text.setText(originalText)
+        original_text_input_edit_text.addTextChangedListener(originalTextWatcher)
     }
 
     override fun onResume() {
         Timber.e("onResume")
+        isFirstLoad = true
         super.onResume()
+        val args = arguments
+        args?.let {
+            Timber.e("with Bundle")
+            presenter.OnArgumentsReceived(it.getStringArray(HISTORY_UNIT)?.toHistoryUnit())
+        }
+        arguments = null
         presenter.onViewStateRestored()
+
+
         showToolbar()
+        val bottomNavigation = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+        bottomNavigation?.menu?.findItem(R.id.translate_tab)?.isChecked = true
+    }
+
+    override fun onAttach(context: Context?) {
+        Timber.e("onAttach")
+        super.onAttach(context)
+
     }
 
     private fun showToolbar() {
@@ -91,6 +123,7 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
         Timber.e("onPause")
         super.onPause()
         hideToolBar()
+        disposable?.dispose()
     }
 
     override fun setFirstLanguage(position: Int) {
@@ -131,6 +164,26 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
     private var isFirstLoad = true
     private var publishSubject: PublishSubject<Editable?> = PublishSubject.create()
     private var disposable: Disposable? = null
+
+    private val originalTextWatcher = object : TextWatcher {
+        init {
+            Timber.e("Textwatcher init")
+        }
+
+        override fun afterTextChanged(changedEditable: Editable?) {
+            Timber.e("text changed first?=" + isFirstLoad)
+            if (!isFirstLoad) {
+                changedEditable?.let { publishSubject.onNext(it) }
+            }
+
+            isFirstLoad = false
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+    }
+
+
     private fun initInputFields(view: View) {
         disposable = publishSubject.debounce(1000, TimeUnit.MILLISECONDS)
             .switchMap(Function<Editable?, ObservableSource<String>> { editable ->
@@ -150,18 +203,6 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
                     )
                 }
             }, { Timber.e(it) })
-        val originalTextWatcher = object : TextWatcher {
-            override fun afterTextChanged(changedEditable: Editable?) {
-                if (!isFirstLoad) {
-                    changedEditable?.let { publishSubject.onNext(it) }
-
-                }
-                isFirstLoad = false
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-        }
         val originalInputField = view.findViewById<TextInputEditText>(R.id.original_text_input_edit_text)
         originalInputField.addTextChangedListener(originalTextWatcher)
     }
@@ -176,4 +217,6 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
     override fun clearTranslationText() {
         translation_text_input_edit_text.setText("")
     }
+
+
 }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.jakewharton.rxbinding2.view.RxView
 import ru.makproductions.sberbanktesttask.R
 import ru.makproductions.sberbanktesttask.presenter.history.IHistoryListPresenter
 import ru.makproductions.sberbanktesttask.view.history.HistoryItemView
@@ -24,6 +25,8 @@ class HistoryRVAdapter(val listPresenter: IHistoryListPresenter) :
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
         holder.pos = position
         listPresenter.bindView(holder)
+        RxView.clicks(holder.view).map<HistoryViewHolder> { obj -> holder }
+            .subscribe(listPresenter.getClickSubject(position))
     }
 
     inner class HistoryViewHolder(val view: View) : RecyclerView.ViewHolder(view), HistoryItemView {
