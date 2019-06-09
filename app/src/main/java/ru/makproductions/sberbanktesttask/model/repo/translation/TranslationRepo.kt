@@ -2,33 +2,35 @@ package ru.makproductions.sberbanktesttask.model.repo.translation
 
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import ru.makproductions.sberbanktesttask.model.entity.HistoryUnit
 import ru.makproductions.sberbanktesttask.model.entity.Languages
 import ru.makproductions.sberbanktesttask.model.entity.Translation
 import ru.makproductions.sberbanktesttask.model.network.ITranslationNetService
 import timber.log.Timber
 
 class TranslationRepo(val netService: ITranslationNetService) : ITranslationRepo {
-    private var translationText = ""
-    private var originalText = ""
-    private var firstLanguage: String = ""
-    private var secondLanguage: String = ""
+
     private var languageMap = mapOf<String, String>()
+    private var historyUnit: HistoryUnit? = null
+
+    override fun saveHistoryUnit(historyUnit: HistoryUnit) {
+        this.historyUnit = historyUnit
+    }
+
+    override fun getSavedHistoryUnit(): HistoryUnit? {
+        return historyUnit
+    }
 
     override fun areLanguagesSaved(): Boolean = !languageMap.isEmpty()
 
-    override fun loadTranslation(line: String): Single<Translation> {
-        var direction = getLanguageDirection()
+    override fun loadTranslation(line: String, firstLanguage: String, secondLanguage: String): Single<Translation> {
+        var direction = getLanguageDirection(firstLanguage, secondLanguage)
         Timber.e("direction = " + direction)
         if (direction.isEmpty()) direction = "en-ru"
         return netService.loadTranslation(line = line, translationDirection = direction).subscribeOn(Schedulers.io())
     }
 
-
-    override fun saveTranslationText(translationText: String) {
-        this.translationText = translationText
-    }
-
-    override fun getSavedTranslationText(): String = translationText
+    override fun getSavedTranslationText(): String = historyUnit?.translationText ?: ""
     override fun loadLanguages(locale: String): Single<Languages> {
         return netService.loadLanguages(locale = locale).subscribeOn(Schedulers.io())
     }
@@ -42,27 +44,15 @@ class TranslationRepo(val netService: ITranslationNetService) : ITranslationRepo
         return languageMap.values.toList()
     }
 
-
-    override fun saveOriginalText(originalText: String) {
-        this.originalText = originalText
-    }
-
-    override fun getSavedOriginalText(): String = originalText
+    override fun getSavedOriginalText(): String = historyUnit?.originalText ?: ""
 
 
-    override fun getSavedFirstLanguage(): String = firstLanguage
+    override fun getSavedFirstLanguage(): String = historyUnit?.languageOriginal ?: ""
 
-    override fun getSavedSecondLanguage(): String = secondLanguage
+    override fun getSavedSecondLanguage(): String = historyUnit?.languageTranslation ?: ""
 
-    override fun saveFirstLanguage(languageName: String) {
-        this.firstLanguage = languageName
-    }
-
-    override fun saveSecondLanguage(languageName: String) {
-        this.secondLanguage = languageName
-    }
-
-    private fun getLanguageDirection(): String = StringBuilder().apply {
+    private fun getLanguageDirection(firstLanguage: String, secondLanguage: String): String = StringBuilder().apply {
+        if (firstLanguage.isEmpty() || secondLanguage.isEmpty()) return "en-ru"
         for (pair in languageMap) {
             if (pair.value == firstLanguage) {
                 this.append(pair.key)

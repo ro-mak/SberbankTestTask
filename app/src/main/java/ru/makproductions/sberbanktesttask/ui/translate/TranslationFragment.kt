@@ -8,7 +8,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Spinner
@@ -48,19 +47,6 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
         return view
     }
 
-    val onFirstLanguageSelectedListener = object : AdapterView.OnItemSelectedListener {
-        override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            presenter.onSaveFirstLanguage(parent?.getItemAtPosition(position) as? String ?: "")
-        }
-    }
-    val onSecondLanguageSelectedListener = object : AdapterView.OnItemSelectedListener {
-        override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            presenter.onSaveSecondLanguage(parent?.getItemAtPosition(position) as? String ?: "")
-        }
-    }
-
     val onDirectionChangeButtonClickListener = View.OnClickListener { presenter.onDirectionChangeButtonClick() }
 
     override fun setLanguages(languageList: List<String>) {
@@ -70,12 +56,10 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
             val firstLanguageSpinnerAdapter = ArrayAdapter<String>(context!!, R.layout.language_spinner_item)
             firstLanguageSpinnerAdapter.addAll(languageList)
             firstLanguageSpinner.adapter = firstLanguageSpinnerAdapter
-            firstLanguageSpinner.onItemSelectedListener = onFirstLanguageSelectedListener
             val secondLanguageSpinner = it.findViewById<Spinner>(R.id.second_language_spinner)
             val secondLanguageSpinnerAdapter = ArrayAdapter<String>(context!!, R.layout.language_spinner_item)
             secondLanguageSpinnerAdapter.addAll(languageList)
             secondLanguageSpinner.adapter = secondLanguageSpinnerAdapter
-            secondLanguageSpinner.onItemSelectedListener = onSecondLanguageSelectedListener
             val directionChangeButton = it.findViewById<ImageView>(R.id.change_translation_direction_button)
             directionChangeButton.setOnClickListener(onDirectionChangeButtonClickListener)
         }
@@ -100,23 +84,12 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
     override fun onPause() {
         Timber.e("onPause")
         super.onPause()
-        presenter.onSaveOriginalText(original_text_input_edit_text?.text.toString())
-        presenter.onSaveTranslationText(translation_text_input_edit_text?.text.toString())
-        val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
-        toolbar?.let {
-            val firstLanguageSpinner = it.findViewById<Spinner>(R.id.first_language_spinner)
-            presenter.onSaveFirstLanguage((firstLanguageSpinner.selectedItem as? String) ?: "")
-            val secondLanguageSpinner = it.findViewById<Spinner>(R.id.second_language_spinner)
-            presenter.onSaveSecondLanguage((secondLanguageSpinner.selectedItem as? String) ?: "")
-        }
-
-
         hideToolBar()
     }
 
     override fun setFirstLanguage(position: Int) {
         val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
-        Timber.e("set first to " + position + " Toolbar = " + toolbar)
+        Timber.e("set first to " + position)
         toolbar?.let {
             val firstLanguageSpinner = it.findViewById<Spinner>(R.id.first_language_spinner)
             firstLanguageSpinner.setSelection(position)
@@ -125,7 +98,7 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
 
     override fun setSecondLanguage(position: Int) {
         val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
-        Timber.e("set second to " + position + " Toolbar = " + toolbar)
+        Timber.e("set second to " + position)
         toolbar?.let {
             val secondLanguageSpinner = it.findViewById<Spinner>(R.id.second_language_spinner)
             secondLanguageSpinner.setSelection(position)
@@ -145,19 +118,33 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
         }
     }
 
+    private fun Toolbar.getSpinnerSelectedItem(resId: Int): String {
+        return this.findViewById<Spinner>(resId).selectedItem as? String ?: ""
+    }
 
+    private var isFirstLoad = true
     private fun initInputFields(view: View) {
         val originalTextWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                Timber.e("change text = " + s.toString())
-                presenter.afterOriginalTextChanged(s.toString())
+                if (!isFirstLoad) {
+                    Timber.e("change text = " + s.toString())
+                    val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
+                    toolbar?.let {
+                        presenter.afterOriginalTextChanged(
+                            s.toString(),
+                            it.getSpinnerSelectedItem(R.id.first_language_spinner),
+                            it.getSpinnerSelectedItem(R.id.second_language_spinner)
+                        )
+                    }
+                }
+                isFirstLoad = false
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
         }
-        view.findViewById<TextInputEditText>(R.id.original_text_input_edit_text)
-            .addTextChangedListener(originalTextWatcher)
+        val originalInputField = view.findViewById<TextInputEditText>(R.id.original_text_input_edit_text)
+        originalInputField.addTextChangedListener(originalTextWatcher)
     }
 
     override fun setTranslationText(translationText: String) {

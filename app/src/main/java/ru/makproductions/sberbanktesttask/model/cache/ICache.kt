@@ -1,8 +1,8 @@
 package ru.makproductions.sberbanktesttask.model.cache
 
 import io.reactivex.Single
-import ru.makproductions.sberbanktesttask.model.entity.IHistoryUnit
+import ru.makproductions.sberbanktesttask.model.entity.HistoryUnit
 
 interface ICache {
-    fun loadHistory(): Single<List<IHistoryUnit>>
+    fun loadHistory(): Single<List<HistoryUnit>>
 }

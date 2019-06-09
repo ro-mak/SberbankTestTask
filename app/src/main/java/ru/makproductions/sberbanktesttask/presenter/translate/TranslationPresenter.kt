@@ -7,9 +7,11 @@ import io.reactivex.disposables.Disposable
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import ru.makproductions.sberbanktesttask.common.toMap
+import ru.makproductions.sberbanktesttask.model.entity.HistoryUnit
 import ru.makproductions.sberbanktesttask.model.repo.translation.ITranslationRepo
 import ru.makproductions.sberbanktesttask.view.translate.TranslationView
 import timber.log.Timber
+import java.util.*
 
 @InjectViewState
 class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationView>(), KoinComponent {
@@ -32,28 +34,41 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
         }, { Timber.e(it) }))
     }
 
-    fun afterOriginalTextChanged(originalText: String) {
-        Timber.e("text = " + originalText)
+    fun afterOriginalTextChanged(originalText: String, firstLanguage: String, secondLanguage: String) {
+        Timber.e("TextWatcher = " + originalText)
         if (originalText.length == 0) {
             Timber.e("clear text")
             viewState.clearTranslationText()
             return
         }
-        loadTranslation(originalText)
+        loadTranslation(originalText, firstLanguage, secondLanguage)
     }
 
-    private fun loadTranslation(originalText: String) {
-        disposables.add(translationRepo.loadTranslation(originalText).observeOn(scheduler).subscribe({ translationItem ->
-            Timber.e("Loading translation for " + originalText)
-            val textStringBuilder = StringBuilder()
-            for (line in translationItem.text) {
-                textStringBuilder.append(line)
-            }
-            val translationText = textStringBuilder.toString()
-            translationRepo.saveOriginalText(originalText)
-            translationRepo.saveTranslationText(translationText)
-            viewState.setTranslationText(translationText)
-        }, { Timber.e(it) }))
+    private fun loadTranslation(originalText: String, firstLanguage: String, secondLanguage: String) {
+        disposables.add(
+            translationRepo.loadTranslation(
+                originalText,
+                firstLanguage,
+                secondLanguage
+            ).observeOn(scheduler).subscribe({ translationItem ->
+                Timber.e("Loading translation for " + originalText)
+                val textStringBuilder = StringBuilder()
+                for (line in translationItem.text) {
+                    textStringBuilder.append(line)
+                }
+                val translationText = textStringBuilder.toString()
+                translationRepo.saveHistoryUnit(
+                    HistoryUnit(
+                        originalText,
+                        translationText,
+                        Calendar.getInstance().time,
+                        firstLanguage,
+                        secondLanguage
+                    )
+                )
+                viewState.setTranslationText(translationText)
+            }, { Timber.e(it) })
+        )
     }
 
     override fun onDestroy() {
@@ -64,56 +79,44 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
         }
     }
 
-    fun onSaveTranslationText(translationText: String) {
-        translationRepo.saveTranslationText(translationText)
-    }
-
-    fun onSaveOriginalText(originalText: String) {
-        translationRepo.saveOriginalText(originalText)
-    }
-
     fun onViewStateRestored() {
-        viewState.setOriginalText(translationRepo.getSavedOriginalText())
-        viewState.setTranslationText(translationRepo.getSavedTranslationText())
         val languages = translationRepo.getSavedLanguages() as? MutableList<String> ?: mutableListOf()
         viewState.setLanguages(languages)
-        val firstLanguage = translationRepo.getSavedFirstLanguage()
-        val secondLanguage = translationRepo.getSavedSecondLanguage()
-        setViewLanguagesValues(languages, firstLanguage, secondLanguage)
-    }
-
-    fun onSaveFirstLanguage(languageName: String) {
-        translationRepo.saveFirstLanguage(languageName)
-        translationRepo.getSavedOriginalText().let { if (it.isNotEmpty()) loadTranslation(it) }
-
-    }
-
-    fun onSaveSecondLanguage(languageName: String) {
-        translationRepo.saveSecondLanguage(languageName)
-        translationRepo.getSavedOriginalText().let { if (it.isNotEmpty()) loadTranslation(it) }
+        val historyUnit = translationRepo.getSavedHistoryUnit()
+        historyUnit?.let {
+            val firstLanguage = it.languageOriginal
+            val secondLanguage = it.languageTranslation
+            setViewLanguagesValues(languages, firstLanguage, secondLanguage)
+            viewState.setOriginalText(it.originalText)
+            viewState.setTranslationText(it.translationText)
+        }
     }
 
     fun onDirectionChangeButtonClick() {
         val languages = translationRepo.getSavedLanguages() as? MutableList<String> ?: mutableListOf()
-        val firstLanguage = translationRepo.getSavedFirstLanguage()
-        val secondLanguage = translationRepo.getSavedSecondLanguage()
-        setViewLanguagesValues(languages, secondLanguage, firstLanguage)
-        setRepoLanguagesValues(secondLanguage, firstLanguage)
-        setTextValues()
+        val historyUnit = translationRepo.getSavedHistoryUnit()
+        historyUnit?.let {
+            val firstLanguage = it.languageOriginal
+            val secondLanguage = it.languageTranslation
+            setViewLanguagesValues(languages, secondLanguage, firstLanguage)
+            translationRepo.saveHistoryUnit(
+                HistoryUnit(
+                    it.translationText,
+                    it.originalText,
+                    Calendar.getInstance().time,
+                    it.languageTranslation,
+                    it.languageOriginal
+                )
+            )
+            setReversedViewTextValues(it)
+        }
     }
 
-    private fun setRepoLanguagesValues(secondLanguage: String, firstLanguage: String) {
-        translationRepo.saveFirstLanguage(secondLanguage)
-        translationRepo.saveSecondLanguage(firstLanguage)
-    }
-
-    private fun setTextValues() {
-        val translationText = translationRepo.getSavedTranslationText()
-        val originalText = translationRepo.getSavedOriginalText()
+    private fun setReversedViewTextValues(historyUnit: HistoryUnit) {
+        val translationText = historyUnit.translationText
+        val originalText = historyUnit.originalText
         viewState.setOriginalText(translationText)
         viewState.setTranslationText(originalText)
-        translationRepo.saveOriginalText(translationText)
-        translationRepo.saveTranslationText(originalText)
     }
 
     private fun setViewLanguagesValues(
