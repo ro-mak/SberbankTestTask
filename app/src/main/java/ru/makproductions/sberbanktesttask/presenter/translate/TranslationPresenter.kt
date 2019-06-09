@@ -59,6 +59,7 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
                 val translationText = textStringBuilder.toString()
                 translationRepo.saveHistoryUnit(
                     HistoryUnit(
+                        UUID.randomUUID().toString(),
                         originalText,
                         translationText,
                         Calendar.getInstance().time,
@@ -101,6 +102,7 @@ class TranslationPresenter(val scheduler: Scheduler) : MvpPresenter<TranslationV
             setViewLanguagesValues(languages, secondLanguage, firstLanguage)
             translationRepo.saveHistoryUnit(
                 HistoryUnit(
+                    UUID.randomUUID().toString(),
                     it.translationText,
                     it.originalText,
                     Calendar.getInstance().time,

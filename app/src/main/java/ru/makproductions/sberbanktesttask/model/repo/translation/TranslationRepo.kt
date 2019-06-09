@@ -2,19 +2,21 @@ package ru.makproductions.sberbanktesttask.model.repo.translation
 
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import ru.makproductions.sberbanktesttask.model.cache.ICache
 import ru.makproductions.sberbanktesttask.model.entity.HistoryUnit
 import ru.makproductions.sberbanktesttask.model.entity.Languages
 import ru.makproductions.sberbanktesttask.model.entity.Translation
 import ru.makproductions.sberbanktesttask.model.network.ITranslationNetService
 import timber.log.Timber
 
-class TranslationRepo(val netService: ITranslationNetService) : ITranslationRepo {
+class TranslationRepo(val netService: ITranslationNetService, val cache: ICache) : ITranslationRepo {
 
     private var languageMap = mapOf<String, String>()
     private var historyUnit: HistoryUnit? = null
 
     override fun saveHistoryUnit(historyUnit: HistoryUnit) {
         this.historyUnit = historyUnit
+        cache.saveHistoryUnit(historyUnit)
     }
 
     override fun getSavedHistoryUnit(): HistoryUnit? {

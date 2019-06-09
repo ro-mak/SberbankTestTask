@@ -13,7 +13,7 @@ import ru.makproductions.sberbanktesttask.model.room.cache.RoomCache
 
 val repoModule = module {
     single { HistoryRepo(get()) }.bind(IHistoryRepo::class)
-    single { TranslationRepo(get()) }.bind(ITranslationRepo::class)
+    single { TranslationRepo(get(), get()) }.bind(ITranslationRepo::class)
 }
 
 val cacheModule = module {

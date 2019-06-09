@@ -2,69 +2,19 @@
 <FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    <android.support.v7.widget.Toolbar
-            android:id="@+id/main_toolbar"
-            android:contentInsetLeft="0dp"
-            android:contentInsetStart="0dp"
-            app:contentInsetLeft="0dp"
-            app:contentInsetStart="0dp"
-            android:contentInsetRight="0dp"
-            android:contentInsetEnd="0dp"
-            app:contentInsetRight="0dp"
-            app:contentInsetEnd="0dp"
-            android:layout_width="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_height="@dimen/main_toolbar_height">
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center"
+        android:layout_height="match_parent"
         >
-            <Spinner
-                    android:id="@+id/first_language_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:gravity="center"
-                    android:background="@null"
 
-                    tools:listitem="@layout/language_spinner_item"
-            />
-            <ImageView
-                    android:id="@+id/change_translation_direction_button"
-                    android:layout_width="wrap_content"
-                    android:visibility="gone"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:src="@drawable/ic_translation_direction_24dp"
-                    android:contentDescription="@string/translation_direction_button_description"
-            />
-            <Spinner
-                    android:id="@+id/second_language_spinner"
-                    android:layout_weight="1"
-                    android:visibility="gone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:background="@null"
-                    tools:listitem="@layout/language_spinner_item"
-            />
-        </LinearLayout>
-    </android.support.v7.widget.Toolbar>
-
+    <include layout="@layout/toolbar_layout"/>
     <FrameLayout
             android:paddingTop="@dimen/main_toolbar_height"
             android:paddingBottom="@dimen/bottom_navigation_height"
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            />
 
     <android.support.design.widget.BottomNavigationView
             android:id="@+id/bottom_navigation_view"
@@ -75,6 +25,6 @@
             app:itemTextColor="@color/bottom_navigation_colour_selector"
             app:menu="@menu/bottom_navigation_menu"
             android:layout_gravity="start|bottom"
-    />
+            />
 </FrameLayout>
 

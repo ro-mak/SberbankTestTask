@@ -6,7 +6,9 @@ import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import ru.makproductions.sberbanktesttask.model.entity.HistoryUnit
 import ru.makproductions.sberbanktesttask.model.repo.history.IHistoryRepo
+import ru.makproductions.sberbanktesttask.view.history.HistoryItemView
 import ru.makproductions.sberbanktesttask.view.history.HistoryView
 import timber.log.Timber
 
@@ -15,15 +17,42 @@ open class HistoryPresenter(val scheduler: Scheduler) : MvpPresenter<HistoryView
 
     val historyRepo: IHistoryRepo by inject()
     val disposables: MutableList<Disposable> = mutableListOf()
-
+    val historyListPresenter: IHistoryListPresenter = HistoryListPresenter()
     fun onCreate() {
         loadHistory()
     }
 
     fun loadHistory() {
+        Timber.e("loadHistory")
         disposables.add(historyRepo.loadHistory().observeOn(scheduler).subscribe({ list ->
-
+            historyListPresenter.setItemList(list)
         }, { Timber.e(it) }))
     }
 
+    fun deleteHistory() {
+        historyRepo.deleteHistory()
+        historyListPresenter.deleteHistory()
+    }
+
+    inner class HistoryListPresenter : IHistoryListPresenter {
+        private var itemList: MutableList<HistoryUnit> = mutableListOf()
+        override fun bindView(view: HistoryItemView) {
+            view.pos?.let {
+                val historyUnit = itemList[it]
+                view.setOriginalText(historyUnit.originalText)
+                view.setTranslationText(historyUnit.translationText)
+            }
+        }
+
+        override fun deleteHistory() {
+            itemList.clear()
+        }
+
+        override fun getItemCount() = itemList.size
+
+        override fun setItemList(itemList: List<HistoryUnit>) {
+            this.itemList = itemList.toMutableList()
+            viewState.onItemsUpdated()
+        }
+    }
 }

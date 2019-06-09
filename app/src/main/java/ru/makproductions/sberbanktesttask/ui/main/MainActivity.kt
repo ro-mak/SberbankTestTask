@@ -5,6 +5,7 @@ import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.toolbar_layout.*
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import ru.makproductions.sberbanktesttask.R

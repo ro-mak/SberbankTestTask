@@ -7,6 +7,7 @@ import ru.makproductions.sberbanktesttask.di.cacheModule
 import ru.makproductions.sberbanktesttask.di.ciceroneModule
 import ru.makproductions.sberbanktesttask.di.networkModule
 import ru.makproductions.sberbanktesttask.di.repoModule
+import ru.makproductions.sberbanktesttask.model.room.db.HistoryDatabase
 import timber.log.Timber
 
 class App : Application() {
@@ -18,6 +19,7 @@ class App : Application() {
         super.onCreate()
         instance = this
         Timber.plant(Timber.DebugTree())
+        HistoryDatabase.create(this)
         startKoin {
             androidContext(this@App)
             modules(listOf(repoModule, cacheModule, ciceroneModule, networkModule))

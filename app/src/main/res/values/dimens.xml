@@ -9,4 +9,5 @@
     <dimen name="main_toolbar_height">56dp</dimen>
     <dimen name="input_field_frame_corner_radius">16dp</dimen>
     <dimen name="input_field_frame_stroke_width">2dp</dimen>
+    <dimen name="history_delete_button_width">100dp</dimen>
 </resources>

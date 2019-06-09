@@ -14,12 +14,18 @@ import android.widget.Spinner
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
+import io.reactivex.Observable
+import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Function
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.fragment_translation.*
 import ru.makproductions.sberbanktesttask.R
 import ru.makproductions.sberbanktesttask.presenter.translate.TranslationPresenter
 import ru.makproductions.sberbanktesttask.view.translate.TranslationView
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 class TranslationFragment : MvpAppCompatFragment(), TranslationView {
 
@@ -123,19 +129,32 @@ class TranslationFragment : MvpAppCompatFragment(), TranslationView {
     }
 
     private var isFirstLoad = true
+    private var publishSubject: PublishSubject<Editable?> = PublishSubject.create()
+    private var disposable: Disposable? = null
     private fun initInputFields(view: View) {
+        disposable = publishSubject.debounce(1000, TimeUnit.MILLISECONDS)
+            .switchMap(Function<Editable?, ObservableSource<String>> { editable ->
+                Observable.create { emitter ->
+                    emitter.onNext(
+                        editable.toString()
+                    )
+                }
+            })
+            .subscribe({
+                val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
+                toolbar?.let { innerToolbar ->
+                    presenter.afterOriginalTextChanged(
+                        it,
+                        innerToolbar.getSpinnerSelectedItem(R.id.first_language_spinner),
+                        innerToolbar.getSpinnerSelectedItem(R.id.second_language_spinner)
+                    )
+                }
+            }, { Timber.e(it) })
         val originalTextWatcher = object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
+            override fun afterTextChanged(changedEditable: Editable?) {
                 if (!isFirstLoad) {
-                    Timber.e("change text = " + s.toString())
-                    val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
-                    toolbar?.let {
-                        presenter.afterOriginalTextChanged(
-                            s.toString(),
-                            it.getSpinnerSelectedItem(R.id.first_language_spinner),
-                            it.getSpinnerSelectedItem(R.id.second_language_spinner)
-                        )
-                    }
+                    changedEditable?.let { publishSubject.onNext(it) }
+
                 }
                 isFirstLoad = false
             }
