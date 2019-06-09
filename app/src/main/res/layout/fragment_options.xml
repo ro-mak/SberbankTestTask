@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        >
+
+    <TextView
+            android:id="@+id/choose_theme_text_view"
+            android:text="@string/choose_theme_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/choose_theme_text_view_text_size"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@id/theme_radio_group"
+            />
+    <RadioGroup
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/theme_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/theme_radio_group_padding_bottom"
+            android:gravity="center"
+            >
+
+        <RadioButton
+                android:id="@+id/green_theme_radio_button"
+                android:text="@string/green_theme_option_name"
+                android:layout_width="wrap_content"
+                android:textSize="@dimen/options_radio_button_text_size"
+                android:layout_height="wrap_content"
+                />
+
+        <RadioButton
+                android:id="@+id/blue_theme_radio_button"
+                android:text="@string/blue__theme_option_name"
+                android:layout_width="wrap_content"
+                android:textSize="@dimen/options_radio_button_text_size"
+                android:layout_height="wrap_content"
+                />
+
+        <RadioButton
+                android:id="@+id/orange_theme_radio_button"
+                android:textSize="@dimen/options_radio_button_text_size"
+                android:text="@string/orange_theme_option_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+    </RadioGroup>
+</android.support.constraint.ConstraintLayout>

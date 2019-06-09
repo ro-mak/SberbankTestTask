@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">SberbankTestTask</string>
+    <string name="translation_tab_title">Translation</string>
+    <string name="history_tab_title">History</string>
+    <string name="options_tab_title">Options</string>
+    <string name="translation_direction_button_description">translation direction</string>
+    <string name="translation_api_key">
+        trnsl.1.1.20190607T172934Z.87f2d9d0810b24b8.33cbb92331080c9965e8da27f8a3aa7ba4d4f76c
+    </string>
+    <string name="original_text_hint">Оригинал</string>
+    <string name="translation_text_hint">Перевод</string>
+    <string name="delete_history_button_title">Delete history</string>
+    <string name="history_search_hint">Search a word</string>
+    <string name="history_search_title">History search</string>
+    <string name="green_theme_option_name">Green Theme</string>
+    <string name="blue__theme_option_name">Blue Theme</string>
+    <string name="orange_theme_option_name">Orange Theme</string>
+    <string name="first_language_options_description">Choose first language</string>
+    <string name="second_language_options_description">Choose second language</string>
+    <string name="choose_theme_title">Choose theme</string>
+
 </resources>
