@@ -13,7 +13,7 @@
         app:contentInsetRight="0dp"
         app:contentInsetEnd="0dp"
         android:layout_width="match_parent"
-        android:background="@color/colorPrimary"
+        android:background="?colorPrimary"
         android:layout_height="@dimen/main_toolbar_height"
         >
 

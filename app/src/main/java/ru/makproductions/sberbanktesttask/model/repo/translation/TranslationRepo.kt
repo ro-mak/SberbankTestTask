@@ -1,12 +1,7 @@
 package ru.makproductions.sberbanktesttask.model.repo.translation
 
-import android.content.Context.MODE_PRIVATE
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import ru.makproductions.sberbanktesttask.App
-import ru.makproductions.sberbanktesttask.common.LANGUAGE_FIRST
-import ru.makproductions.sberbanktesttask.common.LANGUAGE_PREFERENCES
-import ru.makproductions.sberbanktesttask.common.LANGUAGE_SECOND
 import ru.makproductions.sberbanktesttask.model.cache.ICache
 import ru.makproductions.sberbanktesttask.model.entity.HistoryUnit
 import ru.makproductions.sberbanktesttask.model.entity.Languages
@@ -72,14 +67,4 @@ class TranslationRepo(val netService: ITranslationNetService, val cache: ICache)
             }
         }
     }.toString()
-
-    override fun getDefaultFirstLanguage(): String {
-        val preferences = App.instance.getSharedPreferences(LANGUAGE_PREFERENCES, MODE_PRIVATE)
-        return preferences.getString(LANGUAGE_FIRST, "") ?: ""
-    }
-
-    override fun getDefaultSecondLanguage(): String {
-        val preferences = App.instance.getSharedPreferences(LANGUAGE_PREFERENCES, MODE_PRIVATE)
-        return preferences.getString(LANGUAGE_SECOND, "") ?: ""
-    }
 }

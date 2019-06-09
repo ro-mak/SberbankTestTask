@@ -9,6 +9,7 @@ import kotlinx.android.synthetic.main.toolbar_layout.*
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import ru.makproductions.sberbanktesttask.R
+import ru.makproductions.sberbanktesttask.common.Prefs
 import ru.makproductions.sberbanktesttask.navigation.FragmentNavigator
 import ru.makproductions.sberbanktesttask.presenter.main.MainPresenter
 import ru.makproductions.sberbanktesttask.ui.history.HistoryFragment
@@ -27,6 +28,7 @@ class MainActivity : MvpAppCompatActivity(), MainView, KoinComponent {
     private val navigator = FragmentNavigator(this, R.id.fragment_container)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(Prefs.theme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(main_toolbar)

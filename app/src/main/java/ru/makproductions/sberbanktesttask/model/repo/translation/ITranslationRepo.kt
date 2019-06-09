@@ -17,6 +17,4 @@ interface ITranslationRepo {
     fun areLanguagesSaved(): Boolean
     fun saveHistoryUnit(historyUnit: HistoryUnit, isCached: Boolean)
     fun getSavedHistoryUnit(): HistoryUnit?
-    fun getDefaultFirstLanguage(): String
-    fun getDefaultSecondLanguage(): String
 }
