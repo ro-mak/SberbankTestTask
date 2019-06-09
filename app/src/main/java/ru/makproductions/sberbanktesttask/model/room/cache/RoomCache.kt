@@ -51,7 +51,7 @@ class RoomCache : ICache {
     override fun deleteHistory() {
         Completable.create { emitter ->
             HistoryDatabase.getInstance()?.historyDao?.deleteAll()
-            Timber.e("HistoryUnit saved")
+            Timber.e("History deleted")
         }.subscribeOn(Schedulers.io()).subscribe()
     }
 }

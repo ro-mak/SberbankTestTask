@@ -9,5 +9,6 @@
     </string>
     <string name="original_text_hint">Оригинал</string>
     <string name="translation_text_hint">Перевод</string>
+    <string name="delete_history_button_title">Delete history</string>
 
 </resources>

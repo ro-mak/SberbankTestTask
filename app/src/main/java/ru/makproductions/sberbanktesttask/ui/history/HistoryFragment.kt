@@ -5,10 +5,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
+import android.view.*
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -42,15 +39,15 @@ class HistoryFragment : MvpAppCompatFragment(), HistoryView {
 
     private fun showHistoryToolbarViews() {
         val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
-        toolbar?.findViewById<ImageView>(R.id.history_delete_button)?.visibility = View.VISIBLE
         toolbar?.findViewById<SearchView>(R.id.history_search_view)?.visibility = View.VISIBLE
+    }
 
-
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.history_menu, menu)
     }
 
     private fun hideHistoryToolbarViews() {
         val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
-        toolbar?.findViewById<ImageView>(R.id.history_delete_button)?.visibility = View.GONE
         toolbar?.findViewById<SearchView>(R.id.history_search_view)?.visibility = View.GONE
     }
 
@@ -63,18 +60,19 @@ class HistoryFragment : MvpAppCompatFragment(), HistoryView {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_history, container, false)
         initRecycler(view)
-        initDeleteButton()
+        setHasOptionsMenu(true)
         historyPresenter.onCreate()
         return view
     }
 
-    private fun initDeleteButton() {
-        val toolbar = activity?.findViewById<Toolbar>(R.id.main_toolbar)
-        val deleteButtonView = toolbar?.findViewById<ImageView>(R.id.history_delete_button)
-        deleteButtonView?.setOnClickListener({
-            historyPresenter.deleteHistory()
-            onItemsUpdated()
-        })
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        item?.let {
+            if (it.itemId == R.id.history_delete_button) {
+                historyPresenter.deleteHistory()
+                onItemsUpdated()
+            }
+        }
+        return false
     }
 
     private fun initRecycler(view: View) {

@@ -65,13 +65,5 @@
                 android:visibility="gone"
                 />
 
-        <ImageView
-                android:id="@+id/history_delete_button"
-                android:visibility="gone"
-                android:layout_weight="1"
-                android:src="@drawable/ic_delete_24dp"
-                android:layout_width="@dimen/history_delete_button_width"
-                android:layout_height="wrap_content"
-                />
     </LinearLayout>
 </android.support.v7.widget.Toolbar>
